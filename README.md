@@ -22,9 +22,10 @@
   	<filter-class>com.mw.custom.servlet.filters.LanguageFilter</filter-class>
   </filter>
   ```
-- Add and configure the custom portal property
+- Add and configure the custom portal properties
   ```
-  com.mw.custom.servlet.filters.LanguageFilter.cacheControlBypassUri
+  com.mw.custom.servlet.filters.LanguageFilter.cacheControlBypassUri=xxx
+  com.mw.custom.servlet.filters.LanguageFilter.cacheControlBypassCombo=true
   ```
   - For example use /o/xxxxx-theme-xxx/js/ to bypass setting the Cache-Control header on any file whose uri starts with /o/xxxxx-theme-xxx/js/
   - Don't include the context if the environment uses a non-standard context
