@@ -41,7 +41,7 @@
 ## Notes ##
 - This is a ‘proof of concept’ that is being provided ‘as is’ without any support coverage or warranty.
 - The creating and sharing of this ‘proof of concept’ should not be considered a recommendation to use it or an endorsement of the approach used by the ‘proof of concept’.
-- Ensure it is fully tested in a non-production environment before considering using in a Production environment.
+- Ensure it is fully tested in a non-production environment (ideally under load) before considering using in a Production environment.
 - The implementation uses a custom JAR meaning it is compatible with Liferay DXP Self-Hosted and Liferay PaaS, but is not compatible with Liferay SaaS.
 - The implementation was tested locally using Liferay DXP 2025.Q1.0 LTS.
 - JDK 21 is expected for both compile time and runtime.
