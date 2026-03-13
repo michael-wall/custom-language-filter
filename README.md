@@ -3,9 +3,10 @@
 - It is intended to control when the Language Filter sets Cache-Control header to 'private, no-cache' rather than always setting it for all requests processed by the Language Filter.
   - In a 'vanilla' local Liferay DXP environment (i.e. without a CDN or reverse proxy etc.) the requests that match will have a Cache-Control header of "max-age=315360000, public".
   - It does NOT change when the core Language Filter logic (i.e. the translation logic) runs.
+  - It does NOT change the setting of Cache-Control header or other cache related headers elsewhere in the Liferay DXP codebase. However the absense of Cache-Control header after processing by the Language Filter may change the behaviour elsewhere in the Liferay DXP codebase. 
 - Custom logic:
-  - If cacheControlBypassUri is not null and the uri starts with the value then the header is not set.
-  - If cacheControlBypassCombo is true and the uri starts with /combo and languageId is populated the header is not set.
+  - If the cacheControlBypassUri property is not null and the request URI starts with the specified value, the custom LanguageFilter does not set the Cache-Control header.
+  - If the cacheControlBypassCombo property is true, the request URI starts with /combo and languageId is populated, the custom LanguageFilter does not set the Cache-Control header.
 
 ## Setup Steps ##
 - Build the JAR.
