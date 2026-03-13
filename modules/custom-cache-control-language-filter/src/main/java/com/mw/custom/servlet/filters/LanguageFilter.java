@@ -13,6 +13,7 @@ import com.liferay.portal.kernel.servlet.PortletServlet;
 import com.liferay.portal.kernel.servlet.ServletResponseUtil;
 import com.liferay.portal.kernel.util.AggregateResourceBundle;
 import com.liferay.portal.kernel.util.DigesterUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -39,17 +40,24 @@ import javax.servlet.http.HttpServletResponse;
 public class LanguageFilter extends BasePortalFilter {
 	
 	private String cacheControlBypassUri = null;
+	private boolean cacheControlBypassCombo = false;
 	
-	public static final String CACHE_CONTROL_BYPASS_URL_PORTAL_PROPERTY = "com.mw.custom.servlet.filters.LanguageFilter.cacheControlBypassUri";
+	public interface PORTAL_PROPERTIES {
+		public static final String CACHE_CONTROL_BYPASS_URI = "com.mw.custom.servlet.filters.LanguageFilter.cacheControlBypassUri";
 
+		public static final String CACHE_CONTROL_BYPASS_COMBO = "com.mw.custom.servlet.filters.LanguageFilter.cacheControlBypassCombo";
+	}
+	
 	@Override
 	public void init(FilterConfig filterConfig) {
 		super.init(filterConfig);
 
 		// MW Start custom logic
-		cacheControlBypassUri = PropsUtil.get(CACHE_CONTROL_BYPASS_URL_PORTAL_PROPERTY);
+		cacheControlBypassUri = PropsUtil.get(PORTAL_PROPERTIES.CACHE_CONTROL_BYPASS_URI);
+		cacheControlBypassCombo = GetterUtil.getBoolean(PropsUtil.get(PORTAL_PROPERTIES.CACHE_CONTROL_BYPASS_COMBO), false);
 		
 		_log.info("cacheControlBypassUri: " + cacheControlBypassUri);
+		_log.info("cacheControlBypassCombo: " + cacheControlBypassCombo);
 		// MW End custom logic
 		
 		ServletContext servletContext = filterConfig.getServletContext();
@@ -81,23 +89,38 @@ public class LanguageFilter extends BasePortalFilter {
 
 		_log.info("PROCESS FILTER...");
 		
-		if (Validator.isNotNull(cacheControlBypassUri)) {
+		boolean setCacheControlHeader = true;
+		boolean isCombo = false;
+		
+		if (cacheControlBypassCombo || Validator.isNotNull(cacheControlBypassUri)) {
 		    HttpServletRequest request = (HttpServletRequest) httpServletRequest;
 		    String uri = request.getRequestURI();
 		    
 		    _log.info("requestURI: " + request.getRequestURI());
-
-		    if (!uri.startsWith(cacheControlBypassUri)) {
-				httpServletResponse.setHeader(
-						HttpHeaders.CACHE_CONTROL, "private, no-cache"); 
-				
-				_log.info("setting cacheControl header...");
-		    } else {
-		    	_log.info("skipping cacheControl header...");
-		    }	
-		} else {
+		    
+		    if (cacheControlBypassCombo && uri.startsWith("/combo")) { // The trailing / is optional...
+		    	isCombo = true;
+		    	
+		    	String languageId = request.getParameter("languageId");
+		    	
+		    	_log.info(languageId);
+		    	
+		    	// Don't set if languageId is populated...
+		    	if (Validator.isNotNull(languageId)) setCacheControlHeader = false;
+		    }
+		    
+		    if (!setCacheControlHeader && !isCombo) {
+			    if (uri.startsWith(cacheControlBypassUri)) {
+			    	setCacheControlHeader = false;
+			    }
+		    }
+		}
+		
+		if (setCacheControlHeader) {
+			_log.info("Set header...");
+			
 			httpServletResponse.setHeader(
-					HttpHeaders.CACHE_CONTROL, "private, no-cache"); 
+					HttpHeaders.CACHE_CONTROL, "private, no-cache");
 		}
 		
 		//httpServletResponse.setHeader(
