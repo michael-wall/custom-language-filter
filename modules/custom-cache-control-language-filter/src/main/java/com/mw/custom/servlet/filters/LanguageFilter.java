@@ -45,12 +45,12 @@ public class LanguageFilter extends BasePortalFilter {
 	@Override
 	public void init(FilterConfig filterConfig) {
 		super.init(filterConfig);
-		
-		_log.info("INIT...");
-		
+
+		// MW Start custom logic
 		cacheControlBypassUri = PropsUtil.get(CACHE_CONTROL_BYPASS_URL_PORTAL_PROPERTY);
 		
 		_log.info("cacheControlBypassUri: " + cacheControlBypassUri);
+		// MW End custom logic
 		
 		ServletContext servletContext = filterConfig.getServletContext();
 
@@ -76,6 +76,8 @@ public class LanguageFilter extends BasePortalFilter {
 			HttpServletRequest httpServletRequest,
 			HttpServletResponse httpServletResponse, FilterChain filterChain)
 		throws Exception {
+		
+		// MW Start custom logic
 
 		_log.info("PROCESS FILTER...");
 		
@@ -97,6 +99,11 @@ public class LanguageFilter extends BasePortalFilter {
 			httpServletResponse.setHeader(
 					HttpHeaders.CACHE_CONTROL, "private, no-cache"); 
 		}
+		
+		//httpServletResponse.setHeader(
+		//		HttpHeaders.CACHE_CONTROL, "private, no-cache");
+		
+		// MW End custom logic
 
 		BufferCacheServletResponse bufferCacheServletResponse =
 			new BufferCacheServletResponse(httpServletResponse);
