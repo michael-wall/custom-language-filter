@@ -90,7 +90,6 @@ public class LanguageFilter extends BasePortalFilter {
 		_log.info("PROCESS FILTER...");
 		
 		boolean setCacheControlHeader = true;
-		boolean isCombo = false;
 		
 		if (cacheControlBypassCombo || Validator.isNotNull(cacheControlBypassUri)) {
 		    HttpServletRequest request = (HttpServletRequest) httpServletRequest;
@@ -98,27 +97,23 @@ public class LanguageFilter extends BasePortalFilter {
 		    
 		    _log.info("requestURI: " + request.getRequestURI());
 		    
-		    if (cacheControlBypassCombo && uri.startsWith("/combo")) { // The trailing / is optional...
-		    	isCombo = true;
-		    	
-		    	String languageId = request.getParameter("languageId");
-		    	
-		    	_log.info(languageId);
-		    	
-		    	// Don't set if languageId is populated...
-		    	if (Validator.isNotNull(languageId)) setCacheControlHeader = false;
+		    // Check first as non-combo more frequent than combo
+		    if (Validator.isNotNull(cacheControlBypassUri) && uri.startsWith(cacheControlBypassUri)) {
+		    	setCacheControlHeader = false;
 		    }
 		    
-		    if (!setCacheControlHeader && !isCombo) {
-			    if (uri.startsWith(cacheControlBypassUri)) {
-			    	setCacheControlHeader = false;
-			    }
+		    if (setCacheControlHeader) {
+		    	// The trailing / is optional for /combo requests
+		    	if (cacheControlBypassCombo && uri.startsWith("/combo")) {
+			    	String languageId = request.getParameter("languageId");
+			    	
+			    	// Don't set if languageId is populated...
+			    	if (Validator.isNotNull(languageId)) setCacheControlHeader = false;	
+		    	}
 		    }
 		}
 		
 		if (setCacheControlHeader) {
-			_log.info("Set header...");
-			
 			httpServletResponse.setHeader(
 					HttpHeaders.CACHE_CONTROL, "private, no-cache");
 		}
