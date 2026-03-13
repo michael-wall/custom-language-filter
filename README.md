@@ -4,8 +4,8 @@
   - In a 'vanilla' local Liferay DXP environment (i.e. without a CDN or reverse proxy etc.) the requests that match will have a Cache-Control header of "max-age=315360000, public".
   - It does NOT change when the core Language Filter logic (i.e. the translation logic) runs.
 - Custom logic:
-  - If cacheControlBypassCombo is true and the uri starts with /combo and languageId is populated the header is not set.
   - If cacheControlBypassUri is not null and the uri starts with the value then the header is not set.
+  - If cacheControlBypassCombo is true and the uri starts with /combo and languageId is populated the header is not set.
 
 ## Setup Steps ##
 - Build the JAR.
