@@ -38,6 +38,7 @@
  
 ## TODO ##
 - Update com.mw.custom.servlet.filters.LanguageFilter.cacheControlBypassUri to be a comma separated array (for example) and update the custom logic in processFilter to match.
+- Cleanup the logging.
  
 ## Notes ##
 - This is a ‘proof of concept’ that is being provided ‘as is’ without any support coverage or warranty.
